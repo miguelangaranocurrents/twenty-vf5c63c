@@ -78,19 +78,21 @@ export const TextInput = ({
   const wrapperRef = useRef<HTMLInputElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
 
+  // Trimming is applied only when the value is committed, so that typing a
+  // space in the middle of a value is not swallowed on each keystroke.
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInternalText(getValue(event.target.value, shouldTrim));
-    onChange?.(getValue(event.target.value, shouldTrim));
+    setInternalText(event.target.value);
+    onChange?.(event.target.value);
   };
   useEffect(() => {
-    setInternalText(getValue(value, shouldTrim));
-  }, [value, shouldTrim]);
+    setInternalText(value);
+  }, [value]);
 
   useRegisterInputEvents({
     focusId: instanceId,
     inputRef: wrapperRef,
     copyRef: copyRef,
-    inputValue: internalText,
+    inputValue: getValue(internalText, shouldTrim),
     onEnter,
     onEscape,
     onClickOutside,
